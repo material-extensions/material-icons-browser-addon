@@ -48,7 +48,7 @@
   },
   "scripts": {
     "prebuild": "rimraf *.zip ./dist",
-    "build": "GITHUB_TOKEN=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 run-s build-ext-dependencies build-languages build-src bundle",
+    "build": "run-s build-ext-dependencies build-languages build-src bundle",
     "build-ext-dependencies": "node ./scripts/build-dependencies.js",
     "build-languages": "node ./scripts/build-languages.js",
     "build-src": "node ./scripts/build-src.js",
