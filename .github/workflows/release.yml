@@ -20,7 +20,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '16.13.0'
+          node-version: "16.13.0"
 
       - name: install dependencies
         run: npm ci
@@ -46,9 +46,9 @@ jobs:
         if: ${{ github.event.inputs.onlyUpload == 'not' || github.event.inputs.onlyUpload == 'none' }}
         uses: EndBug/add-and-commit@v7
         with:
-          add: '.'
-          message: '[auto] release  ${{steps.package-version.outputs.package_version}}'
-          tag: '${{steps.package-version.outputs.package_version}}'
+          add: "."
+          message: "[auto] release  ${{steps.package-version.outputs.package_version}}"
+          tag: "${{steps.package-version.outputs.package_version}}"
 
       - name: Release
         if: ${{ github.event.inputs.onlyUpload == 'not' || github.event.inputs.onlyUpload == 'none' }}
@@ -56,15 +56,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: '${{steps.package-version.outputs.package_version}}'
-          files: '*.zip'
+          tag_name: "${{steps.package-version.outputs.package_version}}"
+          files: "*.zip"
 
       - name: Upload to chrome store
         if: ${{ github.event.inputs.onlyUpload != 'firefox' && github.event.inputs.onlyUpload != 'none' }}
         continue-on-error: true
         uses: trmcnvn/chrome-addon@v2
         with:
-          extension: bggfcpfjbdkhfhfmkjpbhnkhnpjjeomc
+          extension: hopghfcljkdgmajlhdfpgpcemcfhbili
           zip: github-material-icons-chrome-extension.zip
           client-id: ${{ secrets.CHROME_CLIENT_ID }}
           client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}

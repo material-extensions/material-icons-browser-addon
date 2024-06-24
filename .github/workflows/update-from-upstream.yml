@@ -1,7 +1,7 @@
 name: Auto Update when upstream releases
 on:
   schedule:
-    - cron: '0 3 * * *'
+    - cron: "0 3 * * *"
   workflow_dispatch:
 jobs:
   get-version:
@@ -13,7 +13,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '16.13.0'
+          node-version: "lts"
 
       - name: Fetch release version
         id: upstream
@@ -37,9 +37,9 @@ jobs:
         if: steps.upstream.outputs.release_tag != steps.upstream.outputs.current_tag
         uses: EndBug/add-and-commit@v7
         with:
-          add: '.'
-          message: '[auto] update to upstream ${{steps.upstream.outputs.release_tag}}'
-          tag: '${{steps.package-version.outputs.package_version}}'
+          add: "."
+          message: "[auto] update to upstream ${{steps.upstream.outputs.release_tag}}"
+          tag: "${{steps.package-version.outputs.package_version}}"
 
       - name: Release
         if: steps.upstream.outputs.release_tag != steps.upstream.outputs.current_tag
@@ -47,9 +47,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: '${{steps.package-version.outputs.package_version}}'
+          tag_name: "${{steps.package-version.outputs.package_version}}"
           body: Built with icons from VSCode Material Icon Theme ${{steps.upstream.outputs.release_tag}}
-          files: '*.zip'
+          files: "*.zip"
 
       - name: Upload to chrome store
         if: steps.upstream.outputs.release_tag != steps.upstream.outputs.current_tag
