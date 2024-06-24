@@ -63,6 +63,6 @@
   },
   "lint-staged": {
     "*.js": "npm run lint",
-    "*": "prettier --write --ignore-unknown"
+    "*": "npm run format"
   }
 }
