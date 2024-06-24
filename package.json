@@ -23,7 +23,8 @@
   },
   "dependencies": {
     "material-icon-theme": "latest",
-    "selector-observer": "2.1.6"
+    "selector-observer": "2.1.6",
+    "webextension-polyfill": "0.11.0"
   },
   "devDependencies": {
     "@octokit/core": "3.5.1",

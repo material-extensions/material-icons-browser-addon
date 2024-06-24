@@ -51,9 +51,12 @@ function src(distPath) {
     );
   const bundleOptionsScript = () =>
     bundleJS(distPath, path.resolve(srcPath, 'ui', 'options', 'options.js'));
+  const bundleBackgroundScript = () =>
+    bundleJS(distPath, path.resolve(srcPath, 'background', 'background.js'));
   const bundleAll = bundleMainScript()
     .then(bundlePopupScript)
-    .then(bundleOptionsScript);
+    .then(bundleOptionsScript)
+    .then(bundleBackgroundScript);
 
   const copyPopup = Promise.all(
     [

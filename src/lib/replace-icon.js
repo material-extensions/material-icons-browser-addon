@@ -1,3 +1,4 @@
+import Browser from 'webextension-polyfill';
 import iconsList from '../icon-list.json';
 const iconMap = require('material-icon-theme/dist/material-icons.json');
 import languageMap from '../language-map.json';
@@ -89,7 +90,7 @@ export function replaceElementWithIcon(
   newSVG.setAttribute('data-material-icons-extension', 'icon');
   newSVG.setAttribute('data-material-icons-extension-iconname', iconName);
   newSVG.setAttribute('data-material-icons-extension-filename', fileName);
-  newSVG.src = chrome.runtime.getURL(`${svgFileName}.svg`);
+  newSVG.src = Browser.runtime.getURL(`${svgFileName}.svg`);
 
   provider.replaceIcon(iconEl, newSVG);
 }
