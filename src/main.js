@@ -1,9 +1,7 @@
 import Browser from 'webextension-polyfill';
 import { initIconSizes } from './lib/icon-sizes';
 import { observePage, replaceAllIcons } from './lib/replace-icons';
-import { observePage, replaceAllIcons } from './lib/replace-icons';
 import { getConfig, onConfigChange } from './lib/userConfig';
-import { getGitProvider } from './providers';
 import { getGitProvider } from './providers';
 
 function init() {
