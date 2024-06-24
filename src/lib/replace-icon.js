@@ -1,5 +1,5 @@
 import iconsList from '../icon-list.json';
-import iconMap from '../icon-map.json';
+const iconMap = require('material-icon-theme/dist/material-icons.json');
 import languageMap from '../language-map.json';
 
 /**
@@ -72,9 +72,16 @@ function replaceIcon(iconEl, fileName, itemRow, provider, iconPack) {
   replaceElementWithIcon(iconEl, iconName, fileName, iconPack, provider);
 }
 
-export function replaceElementWithIcon(iconEl, iconName, fileName, iconPack, provider) {
+export function replaceElementWithIcon(
+  iconEl,
+  iconName,
+  fileName,
+  iconPack,
+  provider
+) {
   // Get folder icon from active icon pack.
-  const svgFileName = lookForIconPackMatch(iconPack, fileName.toLowerCase()) ?? iconName;
+  const svgFileName =
+    lookForIconPackMatch(iconPack, fileName.toLowerCase()) ?? iconName;
 
   if (!svgFileName) return;
 
@@ -99,30 +106,42 @@ export function replaceElementWithIcon(iconEl, iconName, fileName, iconPack, pro
  * @param {boolean} isSymlink Check if symlink
  * @returns {string} The matched icon name.
  */
-function lookForMatch(fileName, lowerFileName, fileExtensions, isDir, isSubmodule, isSymlink) {
+function lookForMatch(
+  fileName,
+  lowerFileName,
+  fileExtensions,
+  isDir,
+  isSubmodule,
+  isSymlink
+) {
   if (isSubmodule) return 'folder-git';
   if (isSymlink) return 'folder-symlink';
 
   // If it's a file.
   if (!isDir) {
     // First look in fileNames
-    if (objectHas(iconMap.fileNames, fileName)) return iconMap.fileNames[fileName];
+    if (objectHas(iconMap.fileNames, fileName))
+      return iconMap.fileNames[fileName];
 
     // Then check all lowercase
-    if (objectHas(iconMap.fileNames, lowerFileName)) return iconMap.fileNames[lowerFileName];
+    if (objectHas(iconMap.fileNames, lowerFileName))
+      return iconMap.fileNames[lowerFileName];
 
     // Look for extension in fileExtensions and languageIds.
     for (const ext of fileExtensions) {
-      if (objectHas(iconMap.fileExtensions, ext)) return iconMap.fileExtensions[ext];
+      if (objectHas(iconMap.fileExtensions, ext))
+        return iconMap.fileExtensions[ext];
       if (objectHas(iconMap.languageIds, ext)) return iconMap.languageIds[ext];
     }
 
     // Look for filename and extension in VSCode language map.
-    if (objectHas(languageMap.fileNames, fileName)) return languageMap.fileNames[fileName];
+    if (objectHas(languageMap.fileNames, fileName))
+      return languageMap.fileNames[fileName];
     if (objectHas(languageMap.fileNames, lowerFileName))
       return languageMap.fileNames[lowerFileName];
     for (const ext of fileExtensions) {
-      if (objectHas(languageMap.fileExtensions, ext)) return languageMap.fileExtensions[ext];
+      if (objectHas(languageMap.fileExtensions, ext))
+        return languageMap.fileExtensions[ext];
     }
 
     // Fallback into default file if no matches.
@@ -131,10 +150,12 @@ function lookForMatch(fileName, lowerFileName, fileExtensions, isDir, isSubmodul
 
   // Otherwise, it's a folder.
   // First look in folderNames.
-  if (objectHas(iconMap.folderNames, fileName)) return iconMap.folderNames[fileName];
+  if (objectHas(iconMap.folderNames, fileName))
+    return iconMap.folderNames[fileName];
 
   // Then check all lowercase.
-  if (objectHas(iconMap.folderNames, lowerFileName)) return iconMap.folderNames[lowerFileName];
+  if (objectHas(iconMap.folderNames, lowerFileName))
+    return iconMap.folderNames[lowerFileName];
 
   // Fallback into default folder if no matches.
   return 'folder';
@@ -152,12 +173,15 @@ function lookForMatch(fileName, lowerFileName, fileExtensions, isDir, isSubmodul
  */
 function lookForLightMatch(iconName, fileName, fileExtensions, isDir) {
   // First look in fileNames and folderNames.
-  if (iconMap.light.fileNames[fileName] && !isDir) return iconMap.light.fileNames[fileName];
-  if (iconMap.light.folderNames[fileName] && isDir) return iconMap.light.folderNames[fileName];
+  if (iconMap.light.fileNames[fileName] && !isDir)
+    return iconMap.light.fileNames[fileName];
+  if (iconMap.light.folderNames[fileName] && isDir)
+    return iconMap.light.folderNames[fileName];
 
   // Look for extension in fileExtensions and languageIds.
   for (const ext of fileExtensions) {
-    if (iconMap.light.fileExtensions[ext] && !isDir) return iconMap.light.fileExtensions[ext];
+    if (iconMap.light.fileExtensions[ext] && !isDir)
+      return iconMap.light.fileExtensions[ext];
   }
 
   return iconName;

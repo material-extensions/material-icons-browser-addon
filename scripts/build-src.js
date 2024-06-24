@@ -2,7 +2,13 @@ const path = require('path');
 const fs = require('fs-extra');
 const Parcel = require('parcel-bundler');
 
-const destSVGPath = path.resolve(__dirname, '..', 'svg');
+const destSVGPath = path.resolve(
+  __dirname,
+  '..',
+  'node_modules',
+  'material-icon-theme',
+  'icons'
+);
 const distBasePath = path.resolve(__dirname, '..', 'dist');
 const srcPath = path.resolve(__dirname, '..', 'src');
 
@@ -12,8 +18,12 @@ async function consolidateSVGFiles() {
   await fs
     .copy(path.resolve(srcPath, 'custom'), destSVGPath)
     .then(() => fs.readdir(destSVGPath))
-    .then((files) => Object.fromEntries(files.map((filename) => [filename, filename])))
-    .then((iconsDict) => fs.writeJSON(path.resolve(srcPath, 'icon-list.json'), iconsDict));
+    .then((files) =>
+      Object.fromEntries(files.map((filename) => [filename, filename]))
+    )
+    .then((iconsDict) =>
+      fs.writeJSON(path.resolve(srcPath, 'icon-list.json'), iconsDict)
+    );
 }
 
 function bundleJS(outDir, entryFile) {
@@ -32,22 +42,38 @@ function src(distPath) {
 
   const copyIcons = fs.copy(destSVGPath, distPath);
 
-  const bundleMainScript = () => bundleJS(distPath, path.resolve(srcPath, 'main.js'));
+  const bundleMainScript = () =>
+    bundleJS(distPath, path.resolve(srcPath, 'main.js'));
   const bundlePopupScript = () =>
-    bundleJS(distPath, path.resolve(srcPath, 'ui', 'popup', 'settings-popup.js'));
+    bundleJS(
+      distPath,
+      path.resolve(srcPath, 'ui', 'popup', 'settings-popup.js')
+    );
   const bundleOptionsScript = () =>
     bundleJS(distPath, path.resolve(srcPath, 'ui', 'options', 'options.js'));
-  const bundleAll = bundleMainScript().then(bundlePopupScript).then(bundleOptionsScript);
+  const bundleAll = bundleMainScript()
+    .then(bundlePopupScript)
+    .then(bundleOptionsScript);
 
   const copyPopup = Promise.all(
-    ['settings-popup.html', 'settings-popup.css', 'settings-popup.github-logo.svg'].map((file) =>
-      fs.copy(path.resolve(srcPath, 'ui', 'popup', file), path.resolve(distPath, file))
+    [
+      'settings-popup.html',
+      'settings-popup.css',
+      'settings-popup.github-logo.svg',
+    ].map((file) =>
+      fs.copy(
+        path.resolve(srcPath, 'ui', 'popup', file),
+        path.resolve(distPath, file)
+      )
     )
   );
 
   const copyOptions = Promise.all(
     ['options.html', 'options.css'].map((file) =>
-      fs.copy(path.resolve(srcPath, 'ui', 'options', file), path.resolve(distPath, file))
+      fs.copy(
+        path.resolve(srcPath, 'ui', 'options', file),
+        path.resolve(distPath, file)
+      )
     )
   );
 
@@ -56,7 +82,10 @@ function src(distPath) {
     path.resolve(distPath, 'injected-styles.css')
   );
 
-  const copyExtensionLogos = fs.copy(path.resolve(srcPath, 'extensionIcons'), distPath);
+  const copyExtensionLogos = fs.copy(
+    path.resolve(srcPath, 'extensionIcons'),
+    distPath
+  );
 
   return Promise.all([
     copyExtensionLogos,
@@ -75,7 +104,9 @@ function buildManifest(distPath, manifestName) {
   ])
     .then(([base, custom]) => ({ ...base, ...custom }))
     .then((manifest) =>
-      fs.writeJson(path.resolve(distPath, 'manifest.json'), manifest, { spaces: 2 })
+      fs.writeJson(path.resolve(distPath, 'manifest.json'), manifest, {
+        spaces: 2,
+      })
     );
 }
 
@@ -90,4 +121,6 @@ function buildDist(name, manifestName) {
     .catch(console.error);
 }
 
-buildDist('firefox', 'firefox.json').then(() => buildDist('chrome-edge', 'chrome-edge.json'));
+buildDist('firefox', 'firefox.json').then(() =>
+  buildDist('chrome-edge', 'chrome-edge.json')
+);

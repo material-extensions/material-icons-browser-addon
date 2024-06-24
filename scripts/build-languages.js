@@ -3,7 +3,7 @@ const api = require('@octokit/core');
 const fs = require('fs-extra');
 const fetch = require('node-fetch');
 const stringify = require('json-stable-stringify');
-const iconMap = require('../src/icon-map.json');
+const iconMap = require('material-icon-theme/dist/material-icons.json');
 
 const vsDataPath = path.resolve(__dirname, '..', 'data');
 const srcPath = path.resolve(__dirname, '..', 'src');
@@ -20,6 +20,7 @@ const octokit = new api.Octokit({
 });
 const query = {
   page: 0,
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   per_page: resultsPerPage,
   q: 'contributes languages filename:package.json repo:microsoft/vscode',
 };
@@ -30,7 +31,9 @@ async function main() {
   await fs.ensureDir(vsDataPath);
   await fs.remove(path.resolve(srcPath, 'language-map.json'));
 
-  console.log('[1/7] Querying Github API for official VSC language contributions.');
+  console.log(
+    '[1/7] Querying Github API for official VSC language contributions.'
+  );
   queryLanguageContributions();
 }
 
@@ -93,7 +96,9 @@ function loadLanguageContribution([extPath, extManifest]) {
   contributions.push(...data.contributes.languages);
   index += 1;
   if (index === total) {
-    console.log('[4/7] Processing language contributions for VSC File Icon API compatibility.');
+    console.log(
+      '[4/7] Processing language contributions for VSC File Icon API compatibility.'
+    );
     index = 0;
     total = contributions.length;
     contributions.forEach(processLanguageContribution);
@@ -132,7 +137,9 @@ function processLanguageContribution(contribution) {
   }
   index += 1;
   if (index === total) {
-    console.log('[5/7] Mapping language contributions into file icon configuration.');
+    console.log(
+      '[5/7] Mapping language contributions into file icon configuration.'
+    );
     index = 0;
     total = languages.length;
     languages.forEach(mapLanguageContribution);
@@ -147,7 +154,11 @@ function mapLanguageContribution(lang) {
   const langIcon = iconMap.languageIds[lang.id];
   lang.extensions.forEach((ext) => {
     const iconName = iconMap.fileExtensions[ext] || langIcon;
-    if (!iconMap.fileExtensions[ext] && iconName && iconMap.iconDefinitions[iconName]) {
+    if (
+      !iconMap.fileExtensions[ext] &&
+      iconName &&
+      iconMap.iconDefinitions[iconName]
+    ) {
       languageMap.fileExtensions[ext] = iconName;
     }
   });
@@ -170,7 +181,9 @@ function mapLanguageContribution(lang) {
 }
 
 async function generateLanguageMap() {
-  console.log('[6/7] Writing language contribution map to icon configuration file.');
+  console.log(
+    '[6/7] Writing language contribution map to icon configuration file.'
+  );
   fs.writeFileSync(
     path.resolve(srcPath, 'language-map.json'),
     stringify(languageMap, { space: '  ' })
