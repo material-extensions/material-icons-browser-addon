@@ -4,9 +4,8 @@
   "description": "Browser Addon that enhances file browsers of version controls with material icons.",
   "main": "src/main.js",
   "author": {
-    "name": "Philipp Kief",
-    "email": "philipp.kief@gmx.de",
-    "url": "https://pkief.com"
+    "name": "Material Extensions",
+    "url": "https://github.com/material-extensions"
   },
   "license": "MIT",
   "homepage": "https://github.com/material-extensions/material-icons-browser-addon#readme",
