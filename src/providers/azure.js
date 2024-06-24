@@ -5,15 +5,18 @@ const azureConfig = {
   domain: 'dev.azure.com',
   selectors: {
     row: 'table.bolt-table tbody > a',
-    filename: 'table.bolt-table tbody > a > td[aria-colindex="1"] span.text-ellipsis',
+    filename:
+      'table.bolt-table tbody > a > td[aria-colindex="1"] span.text-ellipsis',
     icon: 'td[aria-colindex="1"] span.icon-margin',
   },
   getIsLightTheme: () =>
-    document.defaultView.getComputedStyle(document.body).getPropertyValue('color') ===
-    'rgba(0, 0, 0, 0.9)', // TODO: There is probably a better way to determine whether Azure is in light mode
+    document.defaultView
+      .getComputedStyle(document.body)
+      .getPropertyValue('color') === 'rgba(0, 0, 0, 0.9)', // TODO: There is probably a better way to determine whether Azure is in light mode
   getIsDirectory: ({ icon }) => icon.classList.contains('repos-folder-icon'),
   getIsSubmodule: () => false, // There appears to be no way to tell if a folder is a submodule
-  getIsSymlink: ({ icon }) => icon.classList.contains('ms-Icon--PageArrowRight'),
+  getIsSymlink: ({ icon }) =>
+    icon.classList.contains('ms-Icon--PageArrowRight'),
   replaceIcon: (svgEl, newSVG) => {
     newSVG.style.display = 'inline-flex';
     newSVG.style.height = '1rem';

@@ -1,9 +1,9 @@
-import githubConfig from './github';
-import bitbucketConfig from './bitbucket';
 import azureConfig from './azure';
+import bitbucketConfig from './bitbucket';
 import giteaConfig from './gitea';
-import gitlabConfig from './gitlab';
 import giteeConfig from './gitee';
+import githubConfig from './github';
+import gitlabConfig from './gitlab';
 import sourceforgeConfig from './sourceforge';
 
 export const providerConfig = {

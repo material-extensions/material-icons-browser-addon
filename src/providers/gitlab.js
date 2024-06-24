@@ -9,10 +9,14 @@ const gitlabConfig = {
     // Any icon not contained in a button
     icon: '.tree-item svg, .file-header-content svg:not(.gl-button-icon)',
   },
-  getIsLightTheme: () => !document.querySelector('body').classList.contains('gl-dark'),
-  getIsDirectory: ({ icon }) => icon.getAttribute('data-testid') === 'folder-icon',
-  getIsSubmodule: ({ row }) => row.querySelector('a')?.classList.contains('is-submodule') || false,
-  getIsSymlink: ({ icon }) => icon.getAttribute('data-testid') === 'symlink-icon',
+  getIsLightTheme: () =>
+    !document.querySelector('body').classList.contains('gl-dark'),
+  getIsDirectory: ({ icon }) =>
+    icon.getAttribute('data-testid') === 'folder-icon',
+  getIsSubmodule: ({ row }) =>
+    row.querySelector('a')?.classList.contains('is-submodule') || false,
+  getIsSymlink: ({ icon }) =>
+    icon.getAttribute('data-testid') === 'symlink-icon',
   replaceIcon: (svgEl, newSVG) => {
     svgEl
       .getAttributeNames()

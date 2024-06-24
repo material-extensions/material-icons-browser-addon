@@ -6,9 +6,12 @@ const giteaConfig = {
     icon: 'td.name.four.wide > span.truncate > svg',
   },
   getIsLightTheme: () => false,
-  getIsDirectory: ({ icon }) => icon.classList.contains('octicon-file-directory-fill'),
-  getIsSubmodule: ({ icon }) => icon.classList.contains('octicon-file-submodule'),
-  getIsSymlink: ({ icon }) => icon.classList.contains('octicon-file-symlink-file'),
+  getIsDirectory: ({ icon }) =>
+    icon.classList.contains('octicon-file-directory-fill'),
+  getIsSubmodule: ({ icon }) =>
+    icon.classList.contains('octicon-file-submodule'),
+  getIsSymlink: ({ icon }) =>
+    icon.classList.contains('octicon-file-symlink-file'),
   replaceIcon: (svgEl, newSVG) => {
     svgEl
       .getAttributeNames()

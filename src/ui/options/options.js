@@ -1,5 +1,10 @@
 /* eslint-disable no-param-reassign */
-import { getConfig, setConfig, clearConfig, onConfigChange } from '../../lib/userConfig';
+import {
+  clearConfig,
+  getConfig,
+  onConfigChange,
+  setConfig,
+} from '../../lib/userConfig';
 import { providerConfig } from '../../providers';
 
 const resetButton = document.getElementById('reset');
@@ -44,7 +49,9 @@ const fillRow = (row, domain) => {
   title.appendChild(document.createTextNode(domain));
 
   if (domain === 'default') {
-    [...row.getElementsByClassName('default-option')].forEach((opt) => opt.remove());
+    [...row.getElementsByClassName('default-option')].forEach((opt) =>
+      opt.remove()
+    );
   }
 
   resetButton.addEventListener('click', () => {
@@ -57,7 +64,8 @@ const fillRow = (row, domain) => {
   const wireConfig = (config, updateInput, updateConfig) => {
     const input = row.getElementsByClassName(config).item(0);
 
-    const populateInput = () => getConfig(config, domain, false).then(updateInput(input));
+    const populateInput = () =>
+      getConfig(config, domain, false).then(updateInput(input));
 
     input.addEventListener('change', updateConfig(config));
     onConfigChange(config, updateInput(input), domain);
@@ -66,7 +74,9 @@ const fillRow = (row, domain) => {
       () => getConfig(config, domain, false).then(updateInput(input)),
       'default'
     );
-    resetButton.addEventListener('click', () => clearConfig(config, domain).then(populateInput));
+    resetButton.addEventListener('click', () =>
+      clearConfig(config, domain).then(populateInput)
+    );
 
     [...input.getElementsByClassName('default-option')].forEach((opt) => {
       input.addEventListener('focus', () => {
@@ -89,7 +99,8 @@ const fillRow = (row, domain) => {
       !value || value === '(default)'
         ? clearConfig(config, domain)
         : setConfig(config, value, domain);
-  const wireSelect = (config) => wireConfig(config, updateSelect, updateConfigFromSelect);
+  const wireSelect = (config) =>
+    wireConfig(config, updateSelect, updateConfigFromSelect);
 
   const updateCheck = (input) => (val) => {
     input.checked = val ?? true;
@@ -98,15 +109,23 @@ const fillRow = (row, domain) => {
     (config) =>
     ({ target: { checked } }) =>
       setConfig(config, checked, domain);
-  const wireCheck = (config) => wireConfig(config, updateCheck, updateConfigFromCheck);
+  const wireCheck = (config) =>
+    wireConfig(config, updateCheck, updateConfigFromCheck);
 
-  return Promise.all([wireSelect('iconSize'), wireSelect('iconPack'), wireCheck('extEnabled')])
+  return Promise.all([
+    wireSelect('iconSize'),
+    wireSelect('iconPack'),
+    wireCheck('extEnabled'),
+  ])
     .then(() => domainToggles(row))
     .then(() => row);
 };
 
 const domainsDiv = document.getElementById('domains');
-const domains = ['default', ...Object.values(providerConfig).map((p) => p.domain)];
+const domains = [
+  'default',
+  ...Object.values(providerConfig).map((p) => p.domain),
+];
 Promise.all(domains.map((d) => fillRow(newDomainRow(), d))).then((rows) =>
   rows.forEach((r) => domainsDiv.appendChild(r))
 );

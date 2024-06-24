@@ -4,7 +4,11 @@ const hardDefaults = {
   extEnabled: true,
 };
 
-export const getConfig = (config, domain = window.location.hostname, useDefault = true) =>
+export const getConfig = (
+  config,
+  domain = window.location.hostname,
+  useDefault = true
+) =>
   new Promise((resolve) => {
     chrome.storage.sync.get(
       {
@@ -28,7 +32,11 @@ export const clearConfig = (config, domain = window.location.hostname) =>
     chrome.storage.sync.remove(`${domain}:${config}`, resolve);
   });
 
-export const onConfigChange = (config, handler, domain = window.location.hostname) =>
+export const onConfigChange = (
+  config,
+  handler,
+  domain = window.location.hostname
+) =>
   chrome.storage.onChanged.addListener(
     (changes) =>
       changes[`${domain}:${config}`]?.newValue !== undefined &&

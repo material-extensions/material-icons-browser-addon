@@ -20,7 +20,7 @@ const octokit = new api.Octokit({
 });
 const query = {
   page: 0,
-  // biome-ignore lint/style/useNamingConvention: <explanation>
+  // biome-ignore lint/style/useNamingConvention: per_page is a valid property name
   per_page: resultsPerPage,
   q: 'contributes languages filename:package.json repo:microsoft/vscode',
 };

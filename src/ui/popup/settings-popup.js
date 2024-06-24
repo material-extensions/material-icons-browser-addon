@@ -7,7 +7,9 @@ function getCurrentTabDomain() {
   const queryOptions = { active: true, lastFocusedWindow: true };
   return new Promise((resolve) => {
     // firefox only supports callback from chrome.tab.query, not Promise return
-    chrome.tabs.query(queryOptions, ([tab]) => resolve(tab && new URL(tab.url).hostname));
+    chrome.tabs.query(queryOptions, ([tab]) =>
+      resolve(tab && new URL(tab.url).hostname)
+    );
   });
 }
 
@@ -23,20 +25,29 @@ function registerControls(domain) {
   getConfig('iconSize', domain).then((size) => {
     document.getElementById('icon-size').value = size;
   });
-  const updateIconSize = (event) => setConfig('iconSize', event.target.value, domain);
-  document?.getElementById('icon-size')?.addEventListener('change', updateIconSize);
+  const updateIconSize = (event) =>
+    setConfig('iconSize', event.target.value, domain);
+  document
+    ?.getElementById('icon-size')
+    ?.addEventListener('change', updateIconSize);
 
   getConfig('iconPack', domain).then((pack) => {
     document.getElementById('icon-pack').value = pack;
   });
-  const updateIconPack = (event) => setConfig('iconPack', event.target.value, domain);
-  document?.getElementById('icon-pack')?.addEventListener('change', updateIconPack);
+  const updateIconPack = (event) =>
+    setConfig('iconPack', event.target.value, domain);
+  document
+    ?.getElementById('icon-pack')
+    ?.addEventListener('change', updateIconPack);
 
   getConfig('extEnabled', domain).then((enabled) => {
     document.getElementById('enabled').checked = enabled;
   });
-  const updateExtEnabled = (event) => setConfig('extEnabled', event.target.checked, domain);
-  document?.getElementById('enabled')?.addEventListener('change', updateExtEnabled);
+  const updateExtEnabled = (event) =>
+    setConfig('extEnabled', event.target.checked, domain);
+  document
+    ?.getElementById('enabled')
+    ?.addEventListener('change', updateExtEnabled);
 
   document
     .getElementById('options-btn')

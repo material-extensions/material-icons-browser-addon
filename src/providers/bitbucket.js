@@ -7,8 +7,10 @@ const bitbucketConfig = {
     icon: 'svg',
   },
   getIsLightTheme: () => true, // No dark mode available for bitbucket currently
-  getIsDirectory: ({ icon }) => icon.parentNode?.getAttribute('aria-label') === 'Directory,',
-  getIsSubmodule: ({ icon }) => icon.parentNode?.getAttribute('aria-label') === 'Submodule,',
+  getIsDirectory: ({ icon }) =>
+    icon.parentNode?.getAttribute('aria-label') === 'Directory,',
+  getIsSubmodule: ({ icon }) =>
+    icon.parentNode?.getAttribute('aria-label') === 'Submodule,',
   getIsSymlink: () => false, // There appears to be no way to determine this for bitbucket
   replaceIcon: (svgEl, newSVG) => {
     newSVG.style.overflow = 'hidden';
