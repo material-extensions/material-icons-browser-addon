@@ -2,10 +2,15 @@ name: Release new version
 on:
   workflow_dispatch:
     inputs:
-      type:
-        description: major|minor|patch - defaults to patch
+      versionChange:
+        type: choice
+        description: Select the version change
         required: true
-        default: patch
+        default: 'patch'
+        options:
+          - major
+          - minor
+          - patch
       onlyUpload:
         description: chrome|firefox|both|not|none  - Only upload to store(s) without bumping version or releasing
         required: true
@@ -35,7 +40,7 @@ jobs:
         if: ${{ github.event.inputs.onlyUpload == 'not' || github.event.inputs.onlyUpload == 'none' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run release ${{ github.event.inputs.type }}
+        run: npm run release ${{ github.event.inputs.versionChange }}
 
       - name: Get package version
         if: ${{ github.event.inputs.onlyUpload == 'not' || github.event.inputs.onlyUpload == 'none' }}
