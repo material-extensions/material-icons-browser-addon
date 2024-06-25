@@ -1,4 +1,6 @@
-export default function github() {
+import { Provider } from '../models';
+
+export default function github(): Provider {
   return {
     name: 'github',
     domains: [
@@ -29,7 +31,7 @@ export default function github() {
     canSelfHost: true,
     isCustom: false,
     getIsLightTheme: () =>
-      document.querySelector('html').getAttribute('data-color-mode') ===
+      document.querySelector('html')?.getAttribute('data-color-mode') ===
       'light',
     getIsDirectory: ({ icon }) =>
       icon.getAttribute('aria-label') === 'Directory' ||
@@ -47,7 +49,7 @@ export default function github() {
           (attr) =>
             attr !== 'src' &&
             !/^data-material-icons-extension/.test(attr) &&
-            newSVG.setAttribute(attr, svgEl.getAttribute(attr))
+            newSVG.setAttribute(attr, svgEl.getAttribute(attr) ?? '')
         );
 
       const prevEl = svgEl.previousElementSibling;

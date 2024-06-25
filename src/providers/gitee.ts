@@ -1,4 +1,6 @@
-export default function gitee() {
+import { Provider } from '../models';
+
+export default function gitee(): Provider {
   return {
     name: 'gitee',
     domains: [
@@ -31,13 +33,13 @@ export default function gitee() {
           (attr) =>
             attr !== 'src' &&
             !/^data-material-icons-extension/.test(attr) &&
-            newSVG.setAttribute(attr, svgEl.getAttribute(attr))
+            newSVG.setAttribute(attr, svgEl.getAttribute(attr) ?? '')
         );
 
       newSVG.style.height = '28px';
       newSVG.style.width = '18px';
 
-      svgEl.parentNode.replaceChild(newSVG, svgEl);
+      svgEl.parentNode?.replaceChild(newSVG, svgEl);
     },
     onAdd: () => {},
   };

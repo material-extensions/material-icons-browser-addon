@@ -1,19 +1,19 @@
-const path = require('path');
-const fs = require('fs-extra');
-const Parcel = require('parcel-bundler');
+import * as path from 'path';
+import * as fs from 'fs-extra';
+import ParcelBundler, { ParcelBundle } from 'parcel-bundler';
 
-const destSVGPath = path.resolve(
+const destSVGPath: string = path.resolve(
   __dirname,
   '..',
   'node_modules',
   'material-icon-theme',
   'icons'
 );
-const distBasePath = path.resolve(__dirname, '..', 'dist');
-const srcPath = path.resolve(__dirname, '..', 'src');
+const distBasePath: string = path.resolve(__dirname, '..', 'dist');
+const srcPath: string = path.resolve(__dirname, '..', 'src');
 
 /** Create icons cache. */
-async function consolidateSVGFiles() {
+async function consolidateSVGFiles(): Promise<void> {
   console.log('[1/2] Generate icon cache for extension.');
   await fs
     .copy(path.resolve(srcPath, 'custom'), destSVGPath)
@@ -26,39 +26,40 @@ async function consolidateSVGFiles() {
     );
 }
 
-function bundleJS(outDir, entryFile) {
+function bundleJS(outDir: string, entryFile: string): Promise<ParcelBundle> {
   const parcelOptions = {
     watch: false,
     minify: true,
     sourceMaps: false,
     outDir,
   };
-  const bundler = new Parcel(entryFile, parcelOptions);
+  const bundler = new ParcelBundler(entryFile, parcelOptions);
   return bundler.bundle();
 }
 
-function src(distPath) {
+function src(distPath: string): Promise<(void | ParcelBundle | void[])[]> {
   console.log('[2/2] Bundle extension manifest, images and main script.');
 
-  const copyIcons = fs.copy(destSVGPath, distPath);
+  const copyIcons: Promise<void> = fs.copy(destSVGPath, distPath);
 
-  const bundleMainScript = () =>
-    bundleJS(distPath, path.resolve(srcPath, 'main.js'));
-  const bundlePopupScript = () =>
+  const bundleMainScript = (): Promise<ParcelBundle> =>
+    bundleJS(distPath, path.resolve(srcPath, 'main.ts'));
+  const bundlePopupScript = (): Promise<ParcelBundle> =>
     bundleJS(
       distPath,
-      path.resolve(srcPath, 'ui', 'popup', 'settings-popup.js')
+      path.resolve(srcPath, 'ui', 'popup', 'settings-popup.ts')
     );
-  const bundleOptionsScript = () =>
-    bundleJS(distPath, path.resolve(srcPath, 'ui', 'options', 'options.js'));
-  const bundleBackgroundScript = () =>
-    bundleJS(distPath, path.resolve(srcPath, 'background', 'background.js'));
-  const bundleAll = bundleMainScript()
+  const bundleOptionsScript = (): Promise<ParcelBundle> =>
+    bundleJS(distPath, path.resolve(srcPath, 'ui', 'options', 'options.ts'));
+  const bundleBackgroundScript = (): Promise<ParcelBundle> =>
+    bundleJS(distPath, path.resolve(srcPath, 'background', 'background.ts'));
+
+  const bundleAll: Promise<ParcelBundle> = bundleMainScript()
     .then(bundlePopupScript)
     .then(bundleOptionsScript)
     .then(bundleBackgroundScript);
 
-  const copyPopup = Promise.all(
+  const copyPopup: Promise<void[]> = Promise.all(
     [
       'settings-popup.html',
       'settings-popup.css',
@@ -71,7 +72,7 @@ function src(distPath) {
     )
   );
 
-  const copyOptions = Promise.all(
+  const copyOptions: Promise<void[]> = Promise.all(
     ['options.html', 'options.css'].map((file) =>
       fs.copy(
         path.resolve(srcPath, 'ui', 'options', file),
@@ -80,12 +81,12 @@ function src(distPath) {
     )
   );
 
-  const copyStyles = fs.copy(
+  const copyStyles: Promise<void> = fs.copy(
     path.resolve(srcPath, 'injected-styles.css'),
     path.resolve(distPath, 'injected-styles.css')
   );
 
-  const copyExtensionLogos = fs.copy(
+  const copyExtensionLogos: Promise<void> = fs.copy(
     path.resolve(srcPath, 'extensionIcons'),
     distPath
   );
@@ -100,7 +101,7 @@ function src(distPath) {
   ]);
 }
 
-function buildManifest(distPath, manifestName) {
+function buildManifest(distPath: string, manifestName: string): Promise<void> {
   return Promise.all([
     fs.readJson(path.resolve(srcPath, 'manifests', 'base.json')),
     fs.readJson(path.resolve(srcPath, 'manifests', manifestName)),
@@ -113,8 +114,8 @@ function buildManifest(distPath, manifestName) {
     );
 }
 
-function buildDist(name, manifestName) {
-  const distPath = path.resolve(distBasePath, name);
+function buildDist(name: string, manifestName: string): Promise<void> {
+  const distPath: string = path.resolve(distBasePath, name);
 
   return fs
     .ensureDir(distPath)

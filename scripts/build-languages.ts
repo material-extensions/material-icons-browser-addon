@@ -1,32 +1,46 @@
-const path = require('path');
-const api = require('@octokit/core');
-const fs = require('fs-extra');
-const fetch = require('node-fetch');
-const stringify = require('json-stable-stringify');
+import * as path from 'path';
+import { Octokit } from '@octokit/core';
+import * as fs from 'fs-extra';
+import stringify from 'json-stable-stringify';
+import fetch from 'node-fetch';
 const iconMap = require('material-icon-theme/dist/material-icons.json');
 
-const vsDataPath = path.resolve(__dirname, '..', 'data');
-const srcPath = path.resolve(__dirname, '..', 'src');
+interface LanguageContribution {
+  id: string;
+  extensions?: string[];
+  filenames?: string[];
+  filenamePatterns?: string[];
+}
 
-let index = 0;
-let total;
-const items = [];
-const contributions = [];
-const languages = [];
+interface Language {
+  id: string;
+  extensions: string[];
+  filenames: string[];
+}
 
-const resultsPerPage = 100; // max 100
-const octokit = new api.Octokit({
+const vsDataPath: string = path.resolve(__dirname, '..', 'data');
+const srcPath: string = path.resolve(__dirname, '..', 'src');
+
+let index: number = 0;
+let total: number;
+const items: Array<[string, string]> = [];
+const contributions: LanguageContribution[] = [];
+const languages: Language[] = [];
+
+const resultsPerPage: number = 100; // max 100
+const octokit: Octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
 });
-const query = {
+// biome-ignore lint/style/useNamingConvention: per_page is a valid name
+const query: { page: number; per_page: number; q: string } = {
   page: 0,
-  // biome-ignore lint/style/useNamingConvention: per_page is a valid property name
+  // biome-ignore lint/style/useNamingConvention: per_page is a valid name
   per_page: resultsPerPage,
   q: 'contributes languages filename:package.json repo:microsoft/vscode',
 };
-const GITHUB_RATELIMIT = 6000;
+const GITHUB_RATELIMIT: number = 6000;
 
-async function main() {
+async function main(): Promise<void> {
   await fs.remove(vsDataPath);
   await fs.ensureDir(vsDataPath);
   await fs.remove(path.resolve(srcPath, 'language-map.json'));
@@ -39,33 +53,42 @@ async function main() {
 
 main();
 
-async function queryLanguageContributions() {
+async function queryLanguageContributions(): Promise<void> {
   const res = await octokit.request('GET /search/code', query);
   if (!res.data) throw new Error();
   query.page = index;
   index += 1;
   if (!total) total = res.data.total_count;
-  items.push(...res.data.items);
+  items.push(
+    ...res.data.items.map(
+      (item) => [item.html_url, item.path] as [string, string]
+    )
+  );
   if (resultsPerPage * index >= total) {
     console.log('[2/7] Fetching Microsoft language contributions from Github.');
     index = 0;
     total = items.length;
-    items.forEach(fetchLanguageContribution);
+    items.forEach(([htmlUrl, path]) =>
+      fetchLanguageContribution(htmlUrl, path)
+    );
   } else {
     setTimeout(queryLanguageContributions, GITHUB_RATELIMIT);
   }
 }
 
-async function fetchLanguageContribution(item) {
-  const rawUrl = item.html_url.replace('/blob/', '/raw/');
-  const resPath = item.path.replace(/[^/]+$/, 'extension.json');
-  const extPath = path.join(vsDataPath, resPath);
-  let extManifest;
+async function fetchLanguageContribution(
+  htmlUrl: string,
+  itemPath: string
+): Promise<void> {
+  const rawUrl: string = htmlUrl.replace('/blob/', '/raw/');
+  const resPath: string = itemPath.replace(/[^/]+$/, 'extension.json');
+  const extPath: string = path.join(vsDataPath, resPath);
+  let extManifest: string;
   try {
-    extManifest = await fetch(rawUrl);
-    extManifest = await extManifest.text();
+    const response = await fetch(rawUrl, {});
+    extManifest = await response.text();
   } catch (reason) {
-    throw new Error(reason);
+    throw new Error(`${reason}`);
   }
   try {
     await fs.ensureDir(path.dirname(extPath));
@@ -78,12 +101,14 @@ async function fetchLanguageContribution(item) {
   if (index === total) {
     console.log('[3/7] Loading VSC language contributions into Node.');
     index = 0;
-    items.forEach(loadLanguageContribution);
+    items.forEach(([extPath, extManifest]) =>
+      loadLanguageContribution(extPath, extManifest)
+    );
   }
 }
 
-function loadLanguageContribution([extPath, extManifest]) {
-  let data;
+function loadLanguageContribution(extPath: string, extManifest: string): void {
+  let data: any;
   try {
     data = JSON.parse(extManifest.replace(/#\w+_\w+#/g, '0'));
   } catch (error) {
@@ -105,7 +130,7 @@ function loadLanguageContribution([extPath, extManifest]) {
   }
 }
 
-function processLanguageContribution(contribution) {
+function processLanguageContribution(contribution: LanguageContribution): void {
   const { id, filenamePatterns } = contribution;
   let { extensions, filenames } = contribution;
   extensions = extensions || [];
@@ -113,10 +138,10 @@ function processLanguageContribution(contribution) {
   if (filenamePatterns) {
     filenamePatterns.forEach((ptn) => {
       if (/^\*\.[^*/?]+$/.test(ptn)) {
-        extensions.push(ptn.substring(1));
+        extensions?.push(ptn.substring(1));
       }
       if (/^[^*/?]+$/.test(ptn)) {
-        filenames.push(ptn);
+        filenames?.push(ptn);
       }
     });
   }
@@ -128,7 +153,9 @@ function processLanguageContribution(contribution) {
     total -= 1;
     return;
   }
-  const language = languages.find((lang) => lang.id === id);
+  const language: Language | undefined = languages.find(
+    (lang) => lang.id === id
+  );
   if (language) {
     language.filenames.push(...filenames);
     language.extensions.push(...extensions);
@@ -146,14 +173,20 @@ function processLanguageContribution(contribution) {
   }
 }
 
-const languageMap = {};
-languageMap.fileExtensions = {};
-languageMap.fileNames = {};
+const languageMap: {
+  fileExtensions: { [key: string]: string };
+  fileNames: { [key: string]: string };
+} = {
+  fileExtensions: {},
+  fileNames: {},
+};
 
-function mapLanguageContribution(lang) {
-  const langIcon = iconMap.languageIds[lang.id];
+function mapLanguageContribution(lang: Language): void {
+  // Assuming iconMap is defined elsewhere in the code or imported
+  const langIcon: string | undefined = iconMap.languageIds[lang.id];
   lang.extensions.forEach((ext) => {
-    const iconName = iconMap.fileExtensions[ext] || langIcon;
+    const iconName: string | undefined =
+      iconMap.fileExtensions[ext] || langIcon;
     if (
       !iconMap.fileExtensions[ext] &&
       iconName &&
@@ -163,7 +196,7 @@ function mapLanguageContribution(lang) {
     }
   });
   lang.filenames.forEach((name) => {
-    const iconName = iconMap.fileNames[name] || langIcon;
+    const iconName: string | undefined = iconMap.fileNames[name] || langIcon;
     if (
       !iconMap.fileNames[name] &&
       !(name.startsWith('.') && iconMap.fileExtensions[name.substring(1)]) &&
@@ -175,16 +208,15 @@ function mapLanguageContribution(lang) {
   });
   index += 1;
   if (index === total) {
-    index = 0;
     generateLanguageMap();
   }
 }
 
-async function generateLanguageMap() {
+async function generateLanguageMap(): Promise<void> {
   console.log(
     '[6/7] Writing language contribution map to icon configuration file.'
   );
-  fs.writeFileSync(
+  await fs.writeFile(
     path.resolve(srcPath, 'language-map.json'),
     stringify(languageMap, { space: '  ' })
   );

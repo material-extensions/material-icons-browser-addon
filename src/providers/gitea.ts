@@ -1,4 +1,6 @@
-export default function gitea() {
+import { Provider } from '../models';
+
+export default function gitea(): Provider {
   return {
     name: 'gitea',
     domains: [
@@ -30,10 +32,10 @@ export default function gitea() {
           (attr) =>
             attr !== 'src' &&
             !/^data-material-icons-extension/.test(attr) &&
-            newSVG.setAttribute(attr, svgEl.getAttribute(attr))
+            newSVG.setAttribute(attr, svgEl.getAttribute(attr) ?? '')
         );
 
-      svgEl.parentNode.replaceChild(newSVG, svgEl);
+      svgEl.parentNode?.replaceChild(newSVG, svgEl);
     },
     onAdd: () => {},
   };

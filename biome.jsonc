@@ -7,7 +7,7 @@
     "indentWidth": 2,
     "lineEnding": "lf",
     "lineWidth": 80,
-    "attributePosition": "auto",
+    "attributePosition": "auto"
   },
   "organizeImports": { "enabled": true },
   "linter": {
@@ -23,14 +23,14 @@
         "useConst": "error",
         "useNamingConvention": {
           "level": "error",
-          "options": { "strictCase": false },
-        },
+          "options": { "strictCase": false }
+        }
       },
       "suspicious": {
         "noDoubleEquals": "error",
-        "useNamespaceKeyword": "error",
-      },
-    },
+        "useNamespaceKeyword": "error"
+      }
+    }
   },
   "javascript": {
     "formatter": {
@@ -42,8 +42,8 @@
       "bracketSpacing": true,
       "bracketSameLine": false,
       "quoteStyle": "single",
-      "attributePosition": "auto",
-    },
+      "attributePosition": "auto"
+    }
   },
-  "overrides": [],
+  "overrides": []
 }

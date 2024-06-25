@@ -1,4 +1,6 @@
-export default function gitlab() {
+import { Provider } from '../models';
+
+export default function gitlab(): Provider {
   return {
     name: 'gitlab',
     domains: [
@@ -21,7 +23,7 @@ export default function gitlab() {
     canSelfHost: true,
     isCustom: false,
     getIsLightTheme: () =>
-      !document.querySelector('body').classList.contains('gl-dark'),
+      !document.querySelector('body')?.classList.contains('gl-dark'),
     getIsDirectory: ({ icon }) =>
       icon.getAttribute('data-testid') === 'folder-icon',
     getIsSubmodule: ({ row }) =>
@@ -35,13 +37,13 @@ export default function gitlab() {
           (attr) =>
             attr !== 'src' &&
             !/^data-material-icons-extension/.test(attr) &&
-            newSVG.setAttribute(attr, svgEl.getAttribute(attr))
+            newSVG.setAttribute(attr, svgEl.getAttribute(attr) ?? '')
         );
 
       newSVG.style.height = '16px';
       newSVG.style.width = '16px';
 
-      svgEl.parentNode.replaceChild(newSVG, svgEl);
+      svgEl.parentNode?.replaceChild(newSVG, svgEl);
     },
     onAdd: () => {},
   };
