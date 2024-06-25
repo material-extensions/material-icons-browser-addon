@@ -23,7 +23,7 @@
   "dependencies": {
     "material-icon-theme": "latest",
     "selector-observer": "2.1.6",
-    "webextension-polyfill": "0.11.0"
+    "webextension-polyfill": "0.12.0"
   },
   "devDependencies": {
     "@octokit/core": "3.5.1",
@@ -34,7 +34,7 @@
     "@types/webextension-polyfill": "0.10.7",
     "compare-versions": "6.1.0",
     "fs-extra": "11.2.0",
-    "husky": "8.0.1",
+    "husky": "9.0.11",
     "json-stable-stringify": "1.1.1",
     "lint-staged": "15.2.7",
     "node-fetch": "2.6.7",
@@ -65,7 +65,7 @@
     "release": "run-s \"update-package-version {1}\" update-manifest-version build --",
     "lint": "npx @biomejs/biome check --write ./src",
     "format": "npx @biomejs/biome format --write ./src",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "lint-staged": {
     "*.ts": "npm run lint",
