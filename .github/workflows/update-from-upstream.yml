@@ -18,9 +18,8 @@ jobs:
       - name: Fetch release version
         id: upstream
         run: |
-          echo ::set-output name=release_tag::$(curl "https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/main/package.json" \
-          | jq -r .version)
-          echo ::set-output name=current_tag::$(<upstream.version)
+          echo ::set-output name=release_tag::$(npm view material-icon-theme version | jq -r .version)
+          echo ::set-output name=current_tag::$(npm list material-icon-theme --depth=0 | grep 'material-icon-theme@' | cut -d '@' -f 2)
 
       - name: Attempt update
         if: steps.upstream.outputs.release_tag != steps.upstream.outputs.current_tag
