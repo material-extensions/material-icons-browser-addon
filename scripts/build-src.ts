@@ -1,6 +1,6 @@
 import * as path from 'path';
+import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
-import ParcelBundler, { ParcelBundle } from 'parcel-bundler';
 
 const destSVGPath: string = path.resolve(
   __dirname,
@@ -26,35 +26,40 @@ async function consolidateSVGFiles(): Promise<void> {
     );
 }
 
-function bundleJS(outDir: string, entryFile: string): Promise<ParcelBundle> {
-  const parcelOptions = {
-    watch: false,
+function bundleJS(
+  outDir: string,
+  entryFile: string
+): Promise<esbuild.BuildResult> {
+  const buildOptions: esbuild.BuildOptions = {
+    entryPoints: [entryFile],
+    bundle: true,
     minify: true,
-    sourceMaps: false,
-    outDir,
+    sourcemap: false,
+    outdir: outDir,
   };
-  const bundler = new ParcelBundler(entryFile, parcelOptions);
-  return bundler.bundle();
+  return esbuild.build(buildOptions);
 }
 
-function src(distPath: string): Promise<(void | ParcelBundle | void[])[]> {
+function src(
+  distPath: string
+): Promise<(void | esbuild.BuildResult | void[])[]> {
   console.log('[2/2] Bundle extension manifest, images and main script.');
 
   const copyIcons: Promise<void> = fs.copy(destSVGPath, distPath);
 
-  const bundleMainScript = (): Promise<ParcelBundle> =>
+  const bundleMainScript = (): Promise<esbuild.BuildResult> =>
     bundleJS(distPath, path.resolve(srcPath, 'main.ts'));
-  const bundlePopupScript = (): Promise<ParcelBundle> =>
+  const bundlePopupScript = (): Promise<esbuild.BuildResult> =>
     bundleJS(
       distPath,
       path.resolve(srcPath, 'ui', 'popup', 'settings-popup.ts')
     );
-  const bundleOptionsScript = (): Promise<ParcelBundle> =>
+  const bundleOptionsScript = (): Promise<esbuild.BuildResult> =>
     bundleJS(distPath, path.resolve(srcPath, 'ui', 'options', 'options.ts'));
-  const bundleBackgroundScript = (): Promise<ParcelBundle> =>
+  const bundleBackgroundScript = (): Promise<esbuild.BuildResult> =>
     bundleJS(distPath, path.resolve(srcPath, 'background', 'background.ts'));
 
-  const bundleAll: Promise<ParcelBundle> = bundleMainScript()
+  const bundleAll: Promise<esbuild.BuildResult> = bundleMainScript()
     .then(bundlePopupScript)
     .then(bundleOptionsScript)
     .then(bundleBackgroundScript);

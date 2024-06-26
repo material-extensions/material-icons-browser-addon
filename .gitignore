@@ -12,7 +12,6 @@ data/
 node_modules
 *.log
 .idea
-.cache/
 .DS_Store
 .eslintcache
 Thumbs.db
