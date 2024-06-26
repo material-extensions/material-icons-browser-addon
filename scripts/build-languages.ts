@@ -3,7 +3,6 @@ import { Octokit } from '@octokit/core';
 import * as fs from 'fs-extra';
 import stringify from 'json-stable-stringify';
 import iconMap from 'material-icon-theme/dist/material-icons.json';
-import fetch from 'node-fetch';
 
 const iconMapTyped: {
   languageIds: { [key: string]: string };
@@ -121,8 +120,9 @@ function loadLanguageContribution(extPath: string, extManifest: string): void {
   } catch (error) {
     throw new Error(`${error} (${extPath})`);
   }
-  if (!data.contributes || !data.contributes.languages) {
+  if (!data.contributes?.languages) {
     total -= 1;
+    console.log(`Info: No language contributions found in ${extPath}`);
     return;
   }
   contributions.push(...data.contributes.languages);
