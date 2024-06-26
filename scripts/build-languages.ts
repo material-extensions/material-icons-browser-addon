@@ -2,8 +2,15 @@ import * as path from 'path';
 import { Octokit } from '@octokit/core';
 import * as fs from 'fs-extra';
 import stringify from 'json-stable-stringify';
+import iconMap from 'material-icon-theme/dist/material-icons.json';
 import fetch from 'node-fetch';
-const iconMap = require('material-icon-theme/dist/material-icons.json');
+
+const iconMapTyped: {
+  languageIds: { [key: string]: string };
+  fileExtensions: { [key: string]: string };
+  fileNames: { [key: string]: string };
+  iconDefinitions: { [key: string]: any };
+} = iconMap;
 
 interface LanguageContribution {
   id: string;
@@ -183,25 +190,28 @@ const languageMap: {
 
 function mapLanguageContribution(lang: Language): void {
   // Assuming iconMap is defined elsewhere in the code or imported
-  const langIcon: string | undefined = iconMap.languageIds[lang.id];
+  const langIcon: string | undefined = iconMapTyped.languageIds[lang.id];
   lang.extensions.forEach((ext) => {
     const iconName: string | undefined =
-      iconMap.fileExtensions[ext] || langIcon;
+      iconMapTyped.fileExtensions[ext] || langIcon;
     if (
-      !iconMap.fileExtensions[ext] &&
+      !iconMapTyped.fileExtensions[ext] &&
       iconName &&
-      iconMap.iconDefinitions[iconName]
+      iconMapTyped.iconDefinitions[iconName]
     ) {
       languageMap.fileExtensions[ext] = iconName;
     }
   });
   lang.filenames.forEach((name) => {
-    const iconName: string | undefined = iconMap.fileNames[name] || langIcon;
+    const iconName: string | undefined =
+      iconMapTyped.fileNames[name] || langIcon;
     if (
-      !iconMap.fileNames[name] &&
-      !(name.startsWith('.') && iconMap.fileExtensions[name.substring(1)]) &&
+      !iconMapTyped.fileNames[name] &&
+      !(
+        name.startsWith('.') && iconMapTyped.fileExtensions[name.substring(1)]
+      ) &&
       iconName &&
-      iconMap.iconDefinitions[iconName]
+      iconMapTyped.iconDefinitions[iconName]
     ) {
       languageMap.fileNames[name] = iconName;
     }
