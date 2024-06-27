@@ -110,6 +110,13 @@ async function fetchLanguageContribution(
     items.forEach(([extPath, extManifest]) =>
       loadLanguageContribution(extPath, extManifest)
     );
+
+    console.log(
+      '[4/7] Processing language contributions for VSC File Icon API compatibility.'
+    );
+    index = 0;
+    total = contributions.length;
+    contributions.forEach(processLanguageContribution);
   }
 }
 
@@ -121,20 +128,9 @@ function loadLanguageContribution(extPath: string, extManifest: string): void {
     throw new Error(`${error} (${extPath})`);
   }
   if (!data.contributes?.languages) {
-    total -= 1;
-    console.log(`Info: No language contributions found in ${extPath}`);
     return;
   }
   contributions.push(...data.contributes.languages);
-  index += 1;
-  if (index === total) {
-    console.log(
-      '[4/7] Processing language contributions for VSC File Icon API compatibility.'
-    );
-    index = 0;
-    total = contributions.length;
-    contributions.forEach(processLanguageContribution);
-  }
 }
 
 function processLanguageContribution(contribution: LanguageContribution): void {
