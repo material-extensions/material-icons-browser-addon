@@ -80,7 +80,7 @@ jobs:
         continue-on-error: true
         uses: wdzeng/edge-addon@v1
         with:
-          product-id: d7692295-d84f-4bf5-9447-3cbb6ae29517
+          product-id: fmnacigfpppckhpaafbjdhljbjjclkkj
           zip-path: github-material-icons-edge-extension.zip
           client-id: ${{ secrets.EDGE_CLIENT_ID }}
           client-secret: ${{ secrets.EDGE_CLIENT_SECRET }}
